@@ -10,7 +10,6 @@ class UserSession(
     override val id: String,
     val handshakeInfo: HandshakeInfo
 ) : AbstractEntity<String>(id) {
-    var locked: Boolean = false
     var player: Player? = null
     var roomKey: UUID? = null
     var principal: Principal? = null

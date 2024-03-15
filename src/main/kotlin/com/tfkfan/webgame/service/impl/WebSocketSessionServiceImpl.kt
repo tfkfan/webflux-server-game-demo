@@ -40,7 +40,8 @@ open class WebSocketSessionServiceImpl : WebSocketSessionService {
 
     override fun sendBroadcast(message: Any) = sessionPublishers.values.forEach { it.tryEmitNext(message) }
     override fun close(userSession: UserSession): Mono<Void> {
-        userSession.locked = true
+        if (sessionSubscriptions.containsKey(userSession.id))
+            sessionSubscriptions[userSession.id]!!.cancel()
         return Mono.empty()
     }
 

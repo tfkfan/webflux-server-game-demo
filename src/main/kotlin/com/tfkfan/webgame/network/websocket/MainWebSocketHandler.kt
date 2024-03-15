@@ -55,7 +55,6 @@ class MainWebSocketHandler(
         }
         return Flux.merge(receive, send, security)
             .doOnSubscribe { webSocketSessionService.onSubscribe(userSession, it) }
-            .takeUntil { userSession.locked }
             .doOnTerminate { webSocketSessionService.onInactive(userSession) }
             .doOnError { handleError(webSocketSession, it) }
             .then()
