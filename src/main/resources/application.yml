@@ -1,0 +1,11 @@
+application:
+  room:
+    max-players: 2
+    loop-rate: 100
+    end-delay: 30000
+server:
+  port: 8080
+
+logging:
+  level:
+    com.tfkfan: TRACE
