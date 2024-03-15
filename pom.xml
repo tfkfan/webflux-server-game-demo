@@ -22,13 +22,6 @@
         <maven.compiler.version>21</maven.compiler.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>apache.snapshot</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

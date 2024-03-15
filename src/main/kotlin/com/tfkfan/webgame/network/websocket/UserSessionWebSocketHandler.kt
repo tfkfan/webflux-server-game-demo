@@ -24,7 +24,6 @@ class UserSessionWebSocketHandler(
 
     fun onNext(message: Message) {
         val messageData = if (message.data != null) message.data as Map<*, *> else null
-        val reconnectKey = messageData?.get("reconnectKey")?.toString()
 
         when (message.type) {
             GAME_ROOM_JOIN -> {

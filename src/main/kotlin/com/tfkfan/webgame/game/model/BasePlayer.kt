@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 
 abstract class BasePlayer<GR : GameRoom, IP : InitPack, UP : UpdatePack, PUP : PrivateUpdatePack>(
     id: Long,  gameRoom: GR,
-    var userSession: UserSession?
+    var userSession: UserSession
 ) : GameEntity<Long, GR, IP, UP>(id, gameRoom), Player, Updatable, IPrivateUpdatePackProvider<PUP> {
     lateinit var target: Vector
     lateinit var direction: Direction
