@@ -22,6 +22,4 @@ interface WebSocketSessionService : WebSocketMessagePublisher {
     fun roomIds():Mono<Collection<String>>
     fun sessionIds():Mono<Collection<String>>
     fun roomSessionIds(roomId:UUID):Mono<Collection<String>>
-    fun ban(userSession: UserSession, seconds:Long):Mono<Void>
-    fun ban(userSessionId: String, seconds:Long):Mono<Void>
 }

@@ -67,16 +67,6 @@ open class WebSocketSessionServiceImpl : WebSocketSessionService {
         roomService.getRoomSessionIds(roomId)
     }
 
-    override fun ban(userSession: UserSession, seconds: Long): Mono<Void> {
-        userSession.banTimeout = OffsetDateTime.now().plusSeconds(seconds)
-        return Mono.empty()
-    }
-
-    override fun ban(userSessionId: String, seconds: Long): Mono<Void> =
-        if (sessions.containsKey(userSessionId))
-            ban(sessions[userSessionId]!!, seconds)
-        else Mono.empty()
-
     override fun sendBroadcast(messageFunction: Function<UserSession, Any>) =
         sessions.values.stream().forEach { this.send(it, messageFunction) }
 
