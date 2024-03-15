@@ -16,9 +16,7 @@ import org.springframework.web.reactive.socket.WebSocketHandler
 import reactor.core.scheduler.Scheduler
 import reactor.core.scheduler.Schedulers
 
-
 const val WEBSOCKET_PATH: String = "/websocket"
-const val TOKEN_FIELD: String = "BEARER_TOKEN"
 
 @EnableWebFlux
 @Configuration
