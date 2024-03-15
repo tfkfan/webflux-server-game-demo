@@ -15,7 +15,5 @@ open class Message {
         this.data = data
     }
 
-    override fun toString(): String {
-        return "Message [type=" + type + ", source=" + data.toString() + "]"
-    }
+    override fun toString(): String = "Message [type=" + type + ", source=" + data.toString() + "]"
 }
