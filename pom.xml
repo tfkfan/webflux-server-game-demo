@@ -17,9 +17,6 @@
     </parent>
 
     <properties>
-        <netty.version>4.1.51.Final</netty.version>
-        <jts.version>1.13</jts.version>
-        <netty.version>4.1.95.Final</netty.version>
         <kotlin.version>1.8.0</kotlin.version>
         <kotlin.coroutines.version>1.8.0-RC</kotlin.coroutines.version>
         <maven.compiler.version>21</maven.compiler.version>
@@ -100,9 +97,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <optimize>true</optimize>
-                    <source>19</source>
-                    <target>19</target>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <source>${maven.compiler.version}</source>
+                    <target>${maven.compiler.version}</target>
                 </configuration>
             </plugin>
         </plugins>
