@@ -153,18 +153,6 @@ class DefaultGameRoom(
         super.onDestroy(userSessions)
     }
 
-    override fun onRejoin(userSession: UserSession, reconnectKey: UUID) {
-        super.onRejoin(userSession, reconnectKey)
-        send(
-            userSession, Message(
-                GAME_ROOM_JOIN_SUCCESS,
-                GameSettingsPack(
-                    roomProperties.loopRate
-                )
-            )
-        )
-    }
-
     override fun close(): Collection<UserSession> {
         roomFutureList.forEach { it.dispose() }
         log.trace("Room {} has been closed", key())

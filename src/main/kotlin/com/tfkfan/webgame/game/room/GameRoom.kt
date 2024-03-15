@@ -15,7 +15,6 @@ interface GameRoom : Runnable, Updatable {
     fun onRoomStarted()
     fun onBattleStarted()
     fun onDestroy(userSessions: List<UserSession>)
-    fun onRejoin(userSession: UserSession, reconnectKey: UUID)
     fun onDisconnect(userSession: UserSession): UserSession
     fun sessions(): Collection<UserSession>
     fun currentPlayersCount(): Int

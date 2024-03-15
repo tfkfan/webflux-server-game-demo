@@ -34,10 +34,6 @@ abstract class AbstractGameRoom protected constructor(
             sendBroadcast(Message(MESSAGE, playerSession.player!!.id.toString() + " left"))
         }
     }
-    override fun onRejoin(userSession: UserSession, reconnectKey: UUID) {
-        userSession.roomKey = key()
-        sessions[userSession.id] = userSession
-    }
     override fun onDisconnect(userSession: UserSession): UserSession = sessions.remove(userSession.id)!!
     override fun send(userSession: UserSession, message: Any) =
         webSocketSessionService.send(userSession, message)
