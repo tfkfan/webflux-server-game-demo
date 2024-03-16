@@ -1,3 +1,3 @@
 package com.tfkfan.webgame.network.pack
 
-interface PrivateUpdatePack : UpdatePack
+interface RemovePack : Pack
