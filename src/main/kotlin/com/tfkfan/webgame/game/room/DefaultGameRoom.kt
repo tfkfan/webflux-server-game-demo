@@ -27,12 +27,11 @@ class DefaultGameRoom(
     gameRoomId: UUID,
     roomService: RoomService,
     webSocketSessionService: WebSocketSessionService,
-    private val schedulerService: Scheduler,
+    schedulerService: Scheduler,
     val gameProperties: GameProperties,
     val roomProperties: RoomProperties
-) : AbstractGameRoom(gameRoomId, roomService, webSocketSessionService) {
+) : AbstractGameRoom(gameRoomId, schedulerService, roomService, webSocketSessionService) {
     private val started = AtomicBoolean(false)
-    private val roomFutureList: MutableList<Disposable> = ArrayList()
 
     override fun onRoomCreated(userSessions: List<UserSession>) {
         if (userSessions.isNotEmpty()) {
@@ -54,26 +53,20 @@ class DefaultGameRoom(
             )
         }
 
-        roomFutureList.add(
-            schedulerService.schedulePeriodically(
-                this,
-                roomProperties.initDelay,
-                roomProperties.loopRate,
-                TimeUnit.MILLISECONDS
-            )
+
+        schedulePeriodically(
+            this,
+            roomProperties.initDelay,
+            roomProperties.loopRate
         )
-        roomFutureList.add(
-            schedulerService.schedule(
-                { roomService.onBattleEnd(this) },
-                roomProperties.endDelay + roomProperties.startDelay,
-                TimeUnit.MILLISECONDS
-            )
+
+        schedule(
+            { roomService.onBattleEnd(this) },
+            roomProperties.endDelay + roomProperties.startDelay
         )
+
         log.trace("Room {} has been created", key())
     }
-
-    private fun schedule(runnable: Runnable, delayMillis: Long) =
-        roomFutureList.add(schedulerService.schedule(runnable, delayMillis, TimeUnit.MILLISECONDS))
 
     override fun onRoomStarted() {
         started.set(false)
@@ -151,12 +144,6 @@ class DefaultGameRoom(
             )
         }
         super.onDestroy(userSessions)
-    }
-
-    override fun close(): Collection<UserSession> {
-        roomFutureList.forEach { it.dispose() }
-        log.trace("Room {} has been closed", key())
-        return super.close()
     }
 
     override fun onClose(userSession: UserSession) {

@@ -8,15 +8,20 @@ import com.tfkfan.webgame.service.WebSocketSessionService
 import com.tfkfan.webgame.shared.MessageType
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import reactor.core.Disposable
+import reactor.core.scheduler.Scheduler
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
 abstract class AbstractGameRoom protected constructor(
     private var gameRoomId: UUID,
+    private val schedulerService: Scheduler,
     protected val roomService: RoomService,
     protected val webSocketSessionService: WebSocketSessionService
 ) : GameRoom {
+    private val roomFutureList: MutableList<Disposable> = ArrayList()
     companion object {
         val log: Logger = LogManager.getLogger(this::class.java)
     }
@@ -36,6 +41,12 @@ abstract class AbstractGameRoom protected constructor(
             sendBroadcast(Message(MESSAGE, playerSession.player!!.id.toString() + " left"))
         }
     }
+
+    override fun schedule(runnable: Runnable, delayMillis: Long)=
+        roomFutureList.add(schedulerService.schedule(runnable, delayMillis, TimeUnit.MILLISECONDS))
+
+    override fun schedulePeriodically(runnable: Runnable, initDelay: Long, loopRate: Long)=
+        roomFutureList.add(schedulerService.schedulePeriodically(runnable,initDelay, loopRate,TimeUnit.MILLISECONDS))
 
     override fun onDisconnect(userSession: UserSession): UserSession = sessions.remove(userSession.id)!!
     override fun send(userSession: UserSession, message: Any) =
@@ -78,6 +89,8 @@ abstract class AbstractGameRoom protected constructor(
     override fun close(): Collection<UserSession> {
         val result: Collection<UserSession> = sessions.values
         sessions.values.forEach { this.onClose(it) }
+        roomFutureList.forEach { it.dispose() }
+        log.trace("Room {} has been closed", key())
         return result
     }
 

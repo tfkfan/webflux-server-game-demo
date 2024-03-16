@@ -24,5 +24,7 @@ interface GameRoom : Runnable, Updatable, WebSocketMessagePublisher {
     fun key(key: UUID)
     fun close(): Collection<UserSession>
     fun onClose(userSession: UserSession)
+    fun schedule(runnable: Runnable, delayMillis: Long):Boolean
+    fun schedulePeriodically(runnable: Runnable, initDelay:Long, loopRate:Long):Boolean
 }
 
