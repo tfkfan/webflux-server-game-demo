@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Scheduler
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentLinkedQueue
 
 @Service
 open class RoomServiceImpl(
@@ -36,15 +34,14 @@ open class RoomServiceImpl(
         val log: Logger = LogManager.getLogger(this::class.java)
     }
 
-    private val gameRoomMap: MutableMap<UUID, DefaultGameRoom> = ConcurrentHashMap()
-    private val sessionQueue: Queue<WaitingPlayerSession> = ConcurrentLinkedQueue()
+    private val gameRoomMap: MutableMap<UUID, DefaultGameRoom> = mutableMapOf()
+    private val sessionQueue: Queue<WaitingPlayerSession> = ArrayDeque()
     override fun getRoomSessionIds(key: UUID?): Collection<String> = getRoomByKey(key).map { room ->
         room.sessions().map { it.id }
     }.orElse(listOf())
 
     override fun getRoomIds(): Collection<String> = gameRoomMap.keys.map { it.toString() }
     override fun getRooms(): Collection<DefaultGameRoom> = gameRoomMap.values.toList()
-
     override fun getRoomByKey(key: UUID?): Optional<DefaultGameRoom> =
         if (key == null) Optional.empty() else Optional.ofNullable(gameRoomMap[key])
 
@@ -53,7 +50,6 @@ open class RoomServiceImpl(
         webSocketSessionService.send(userSession, Message(GAME_ROOM_JOIN_WAIT))
 
         if (sessionQueue.size < applicationProperties.room.maxPlayers) return
-
 
         val gameMap = GameMap()
         val room = createRoom(gameMap)
@@ -70,9 +66,13 @@ open class RoomServiceImpl(
         launchRoom(room, userSessions)
     }
 
+    override fun removePlayerFromWaitQueue(session: UserSession) {
+            sessionQueue.removeIf{waitingPlayerSession -> waitingPlayerSession.userSession == session }
+    }
+
     private fun createRoom(gameMap: GameMap): DefaultGameRoom {
         val room = DefaultGameRoom(gameMap,
-            UUID.randomUUID(), this@RoomServiceImpl, webSocketSessionService,
+            UUID.randomUUID(), this, webSocketSessionService,
             schedulerService, applicationProperties.game,
             applicationProperties.room
         )

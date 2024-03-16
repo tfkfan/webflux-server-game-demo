@@ -1,14 +1,13 @@
 package com.tfkfan.webgame.game.map
 
 import com.tfkfan.webgame.game.model.DefaultPlayer
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * @author Baltser Artem tfkfan
  */
 class GameMap {
 
-    private val players: MutableMap<Long, DefaultPlayer> = ConcurrentHashMap()
+    private val players: MutableMap<Long, DefaultPlayer> = HashMap()
 
     fun getPlayerById(id: Long): DefaultPlayer? = players[id]
     fun getPlayers(): Collection<DefaultPlayer> = players.values

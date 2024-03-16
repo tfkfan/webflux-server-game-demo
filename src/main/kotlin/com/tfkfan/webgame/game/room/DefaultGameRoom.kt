@@ -14,12 +14,10 @@ import com.tfkfan.webgame.network.shared.UserSession
 import com.tfkfan.webgame.service.RoomService
 import com.tfkfan.webgame.service.WebSocketSessionService
 import com.tfkfan.webgame.shared.Direction
-import reactor.core.Disposable
 import reactor.core.scheduler.Scheduler
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
 class DefaultGameRoom(
@@ -52,7 +50,6 @@ class DefaultGameRoom(
                 )
             )
         }
-
 
         schedulePeriodically(
             this,

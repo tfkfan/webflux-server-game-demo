@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger
 import reactor.core.Disposable
 import reactor.core.scheduler.Scheduler
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
@@ -26,7 +25,7 @@ abstract class AbstractGameRoom protected constructor(
         val log: Logger = LogManager.getLogger(this::class.java)
     }
 
-    private var sessions: MutableMap<String, UserSession> = ConcurrentHashMap()
+    private var sessions: MutableMap<String, UserSession> = HashMap()
 
     override fun onRoomCreated(userSessions: List<UserSession>) {
         for (playerSession in userSessions) {

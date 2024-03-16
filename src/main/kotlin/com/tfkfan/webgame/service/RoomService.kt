@@ -12,6 +12,7 @@ interface RoomService{
     fun getRooms():Collection<DefaultGameRoom>
     fun getRoomByKey(key: UUID?): Optional<DefaultGameRoom>
     fun addPlayerToWait(userSession: UserSession, initialData: GameRoomJoinEvent)
+    fun removePlayerFromWaitQueue(session: UserSession)
     fun onBattleEnd(room: DefaultGameRoom)
     fun close(key: UUID?):Mono<Void>
 }

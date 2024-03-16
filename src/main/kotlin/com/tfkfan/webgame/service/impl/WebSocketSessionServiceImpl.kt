@@ -2,9 +2,8 @@ package com.tfkfan.webgame.service.impl
 
 import com.tfkfan.webgame.config.FAILURE
 import com.tfkfan.webgame.config.MESSAGE
-import com.tfkfan.webgame.game.model.DefaultPlayer
-import com.tfkfan.webgame.network.shared.Message
 import com.tfkfan.webgame.network.pack.shared.GameMessagePack
+import com.tfkfan.webgame.network.shared.Message
 import com.tfkfan.webgame.network.shared.UserSession
 import com.tfkfan.webgame.service.RoomService
 import com.tfkfan.webgame.service.WebSocketSessionService
@@ -19,9 +18,7 @@ import reactor.core.publisher.Mono
 import reactor.core.publisher.Sinks
 import reactor.core.publisher.Sinks.Many
 import java.security.Principal
-import java.time.OffsetDateTime
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Function
 
 /**
@@ -33,9 +30,9 @@ open class WebSocketSessionServiceImpl : WebSocketSessionService {
         val log = LogManager.getLogger(this::class.java)
     }
 
-    private var sessionPublishers: ConcurrentHashMap<String, Many<Any>> = ConcurrentHashMap()
-    private var sessionSubscriptions: ConcurrentHashMap<String, Subscription> = ConcurrentHashMap()
-    private var sessions: ConcurrentHashMap<String, UserSession> = ConcurrentHashMap()
+    private var sessionPublishers: MutableMap<String, Many<Any>> = HashMap()
+    private var sessionSubscriptions: MutableMap<String, Subscription> = HashMap()
+    private var sessions: MutableMap<String, UserSession> = HashMap()
     private lateinit var roomService: RoomService
 
     override fun sendBroadcast(message: Any) = sessionPublishers.values.forEach { it.tryEmitNext(message) }
