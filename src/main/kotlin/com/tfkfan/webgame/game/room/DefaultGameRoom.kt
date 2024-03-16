@@ -45,7 +45,7 @@ class DefaultGameRoom(
 
         super.onRoomCreated(userSessions)
 
-        sendBroadcastMapped {
+        sendBroadcast {
             Message(
                 GAME_ROOM_JOIN_SUCCESS,
                 GameSettingsPack(
@@ -111,7 +111,7 @@ class DefaultGameRoom(
                 .map { it.getUpdatePack() }
 
             val session = currentPlayer.userSession
-            if (session != null) send(
+            send(
                 session, Message(
                     UPDATE,
                     GameUpdatePack(

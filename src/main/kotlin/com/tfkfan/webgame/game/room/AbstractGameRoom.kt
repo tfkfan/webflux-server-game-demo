@@ -5,6 +5,7 @@ import com.tfkfan.webgame.network.shared.Message
 import com.tfkfan.webgame.network.shared.UserSession
 import com.tfkfan.webgame.service.RoomService
 import com.tfkfan.webgame.service.WebSocketSessionService
+import com.tfkfan.webgame.shared.MessageType
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.util.*
@@ -28,19 +29,44 @@ abstract class AbstractGameRoom protected constructor(
             sendBroadcast(Message(MESSAGE, playerSession.player!!.id.toString() + " successfully joined"))
         }
     }
+
     override fun onDestroy(userSessions: List<UserSession>) {
         for (playerSession in userSessions) {
             this.sessions.remove(playerSession.id)
             sendBroadcast(Message(MESSAGE, playerSession.player!!.id.toString() + " left"))
         }
     }
+
     override fun onDisconnect(userSession: UserSession): UserSession = sessions.remove(userSession.id)!!
     override fun send(userSession: UserSession, message: Any) =
         webSocketSessionService.send(userSession, message)
+
     override fun sendBroadcast(message: Any) =
         webSocketSessionService.sendBroadcast(sessions.values, message)
-    override fun sendBroadcastMapped(function: Function<UserSession, Any>) =
-        webSocketSessionService.sendBroadcast(sessions.values, function)
+
+    override fun sendBroadcast(messageFunction: Function<UserSession, Any>) =
+        webSocketSessionService.sendBroadcast(sessions.values, messageFunction)
+
+    override fun sendFailure(userSession: UserSession, message: Any) {
+        webSocketSessionService.sendFailure(userSession, message)
+    }
+
+    override fun sendBroadcast(type: MessageType, message: String) {
+       webSocketSessionService.sendBroadcast(type, message)
+    }
+
+    override fun sendBroadcast(userSessions: Collection<UserSession>, message: Any) {
+        webSocketSessionService.sendBroadcast(userSessions, message)
+    }
+
+    override fun send(userSession: UserSession, function: Function<UserSession, Any>) {
+        webSocketSessionService.send(userSession, function)
+    }
+
+    override fun sendBroadcast(userSessions: Collection<UserSession>, function: Function<UserSession, Any>) {
+        webSocketSessionService.sendBroadcast(userSessions, function)
+    }
+
     override fun run() {
         try {
             update()
@@ -48,16 +74,19 @@ abstract class AbstractGameRoom protected constructor(
             log.error("room update exception", e)
         }
     }
+
     override fun close(): Collection<UserSession> {
         val result: Collection<UserSession> = sessions.values
         sessions.values.forEach { this.onClose(it) }
         return result
     }
+
     override fun onClose(userSession: UserSession) {}
     override fun getPlayerSessionBySessionId(userSession: UserSession): Optional<UserSession> =
         if (sessions.containsKey(userSession.id)) Optional.of(sessions[userSession.id]!!)
         else Optional.empty()
-    override fun sessions(): Collection<UserSession> =sessions.values
+
+    override fun sessions(): Collection<UserSession> = sessions.values
     override fun currentPlayersCount(): Int = sessions.size
     override fun key(): UUID = gameRoomId
     override fun key(key: UUID) {
